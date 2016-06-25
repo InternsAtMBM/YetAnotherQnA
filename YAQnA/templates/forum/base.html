@@ -34,9 +34,9 @@
         <nav class="nav navbar-nav pull-xs-left">
 			<a class="nav-item nav-link" href="/forum/index">Home</a>
             {% if user.is_authenticated %}
-            <a class="nav-item nav-link" href="#">Ask A Question</a>
+            <a class="nav-item nav-link" href="/forum/ask_question">Ask A Question</a>
             <a class="nav-item nav-link" href="/forum/logout">Logout</a>
-            <a class="navbar-right nav-item nav-link href="#">Hello {{user.username}}</a>
+            <a class="navbar-right nav-item nav-link" href="#">Hello {{user.username}}</a>
             {% else %}
             <a class="nav-item nav-link" href="/forum/register">SignUp</a>
             <a class="nav-item nav-link" href="/forum/login">Login</a>

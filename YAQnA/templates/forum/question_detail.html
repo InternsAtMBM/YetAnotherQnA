@@ -1,0 +1,18 @@
+{% extends "forum/base.html" %}
+{% block title_block %}
+    Question
+{% endblock %}
+{% block body_block %}
+{% if user.is_authenticated %}
+    <ul>
+        <li>{{ question.title }}</li>
+        <li>{{question.text}}</li>
+        <li>Domain:{{question.domain}}</li>
+        <li>Asked By-{{ question.user.username}}</li>
+    </ul>
+    <p><a href="{% url 'forum:submit_answer' question.id %}">Submit Answer</a></button></p>
+    {% else %}
+        You need to <a href="{% url 'forum:user_login' %}">Login</a> to View this page
+    {% endif %}
+
+{% endblock %}

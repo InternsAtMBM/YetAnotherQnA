@@ -20,6 +20,6 @@ from forum import views
 urlpatterns = [
     url(r'^$', views.index, name='index'),
     url(r'^admin/', admin.site.urls),
-    url(r'^forum/', include('forum.urls')),    
+    url(r'^forum/', include('forum.urls',namespace="forum")),
     
 ]

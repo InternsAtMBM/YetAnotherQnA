@@ -5,4 +5,14 @@
 {% endblock %}
 {% block body_block %}
 <h1>Yet Another QnA Forum </h1>
+<br/>
+<br/>
+<h4>Trending Questions</h4>
+<ul>
+{% for question in trending_question %}
+    <div>
+    <li><a href="{% url 'forum:question_detail' question.id%}">{{question}}</a></li>
+    </div>
+{% endfor %}
+</ul>
 {% endblock %}
