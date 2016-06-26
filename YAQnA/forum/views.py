@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
-from models import UserProfile, Question, Answer
+from .models import UserProfile, Question, Answer
 from forms import UserForm, UserProfileForm, QuestionForm, AnswerForm
 from django.http import HttpResponse, HttpResponseRedirect
 from django.core.urlresolvers import reverse
@@ -17,6 +17,7 @@ def about(request):
 
 
 def ask_question(request):
+    #error_msg = "outside POST"
     if not request.user.is_authenticated():
         return render(request,'forum/login.html')
     question_form = QuestionForm()
@@ -25,25 +26,29 @@ def ask_question(request):
         if question_form.is_valid():
             question = question_form.save(commit=False)
             question.user = request.user
-            error_msg = None
-            context_dict = {'question_form':question_form,'error_msg':error_msg}
+            #error_msg = "inside post"
             question.save()
             return HttpResponseRedirect('/forum/index')
         else:
             error_msg = question_form.errors
-            return render(request,'forum/ask_question.html',{'error_msg':error_msg})
+            return render(request,'forum/ask_question.html',{'question_form':question_form})
     else:
         return render(request,'forum/ask_question.html',{'question_form':question_form})
 
 def question_detail(request, question_id):
     question = get_object_or_404(Question,pk=question_id)
-    return render(request,'forum/question_detail.html',{'question':question})
+    answer = Answer.objects.filter(question=question)
+    return render(request,'forum/question_detail.html',{'question':question,'answer':answer})
 
 
 def submit_answer(request, question_id):
     question = Question.objects.filter(pk=question_id)[0]
     if not request.user.is_authenticated():
         return render(request, 'forum/login.html')
+    chk_duplicate = Answer.objects.filter(user=request.user, question=question)
+    if  chk_duplicate:
+        return HttpResponse("You Can not answer more than one time for a particular Question")
+
     answer_form = AnswerForm()
     if request.method == "POST":
         answer_form = AnswerForm(data=request.POST)

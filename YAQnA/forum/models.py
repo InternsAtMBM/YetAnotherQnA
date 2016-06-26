@@ -24,9 +24,9 @@ class Question(models.Model):
 
 
 class Answer(models.Model):
-    user = models.ForeignKey(User,on_delete=models.CASCADE)
-    question = models.OneToOneField(Question, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    question = models.ForeignKey(Question, on_delete=models.CASCADE)
     text = models.CharField(max_length=5000,blank=False)
 
     def __unicode__(self):
-        return self.text+" answered by "+self.user.username+" asked by "+self.question.user.username+" on "+self.question.title
+        return self.text+" ->"+self.user.username

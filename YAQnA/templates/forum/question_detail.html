@@ -9,7 +9,16 @@
         <li>{{question.text}}</li>
         <li>Domain:{{question.domain}}</li>
         <li>Asked By-{{ question.user.username}}</li>
+        {% if answer %}
+        <h4>-------Answers------</h4>
+        {% for ans in answer %}
+         <li>{{ans}} </li>
+        {% endfor %}
+        {% endif %}
     </ul>
+
+    {% for ans in answer %}
+    {% endfor %}
     <p><a href="{% url 'forum:submit_answer' question.id %}">Submit Answer</a></button></p>
     {% else %}
         You need to <a href="{% url 'forum:user_login' %}">Login</a> to View this page

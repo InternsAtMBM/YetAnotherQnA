@@ -5,8 +5,8 @@ from models import UserProfile, Question, Answer
 class QuestionForm(forms.ModelForm):
     title = forms.CharField(max_length=130,help_text="Please Provide Appropriate Title",required=True)
     text = forms.Textarea()
-    views = forms.IntegerField(widget=forms.HiddenInput(),initial=0)
-    follow = forms.IntegerField(widget=forms.HiddenInput(),initial=0)
+    views = forms.IntegerField(widget=forms.HiddenInput(),initial=0, required=False)
+    follow = forms.IntegerField(widget=forms.HiddenInput(),initial=0, required=False)
     domain = forms.CharField(max_length=40,required=True)
     class Meta:
         model = Question
@@ -24,7 +24,16 @@ class AnswerForm(forms.ModelForm):
 
 
 class UserForm(forms.ModelForm):
-    password = forms.CharField(widget=forms.PasswordInput()) 
+    password = forms.CharField(widget=forms.PasswordInput())
+    password_confirm = forms.CharField(widget=forms.PasswordInput())
+
+    def clean(self):
+        super(forms.ModelForm, self).clean()
+        if 'password' in self.cleaned_data and 'password_confirm' in self.cleaned_data:
+            if self.cleaned_data['password'] != self.cleaned_data['password_confirm']:
+                self._errors['password'] = 'Password Should Match'
+                self._errors['password_confirm'] = 'Passwords should match.'
+        return self.cleaned_data
     class Meta:
         model = User
         fields = ('username', 'email', 'password')
