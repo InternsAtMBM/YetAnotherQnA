@@ -31,17 +31,18 @@
       </button>
       <a class="navbar-brand" href="#">QnA</a>
       <div id="navbar">
-        <nav class="nav navbar-nav pull-xs-left">
+        <nav class="nav navbar-nav navbar-right">
 			<a class="nav-item nav-link" href="/forum/index">Home</a>
+            <a class="nav-item nav-link" href="/forum/about">About</a>
             {% if user.is_authenticated %}
             <a class="nav-item nav-link" href="/forum/ask_question">Ask A Question</a>
             <a class="nav-item nav-link" href="/forum/logout">Logout</a>
-            <a class="navbar-right nav-item nav-link" href="#">Hello {{user.username}}</a>
+            <a class="nav-item nav-link" href="/forum/{{user.username}}">{{user.username}}</a>
             {% else %}
             <a class="nav-item nav-link" href="/forum/register">SignUp</a>
             <a class="nav-item nav-link" href="/forum/login">Login</a>
             {% endif %}
-			<a class="nav-item nav-link" href="/forum/about">About</a>	
+
         </nav>
       </div>
     </nav>

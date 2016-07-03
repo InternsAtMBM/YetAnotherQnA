@@ -8,11 +8,17 @@
         <li>{{ question.title }}</li>
         <li>{{question.text}}</li>
         <li>Domain:{{question.domain}}</li>
-        <li>Asked By-{{ question.user.username}}</li>
+        <li>Asked By-<a href="{% url 'forum:show_profile' question.user.username%}">{{ question.user.username}}</a></li>
+        <li>Views - {{question.views}}</li>
         {% if answer %}
         <h4>-------Answers------</h4>
         {% for ans in answer %}
-         <li>{{ans}} </li>
+        <div class="jumbotron">
+        <ul>
+            <li>{{ans.text|urlize}}</li>
+            <li>Submitted By-<a href="{% url 'forum:show_profile' ans.user.username %}">{{ans.user.username}}</a></li>
+        </ul>
+        </div>
         {% endfor %}
         {% endif %}
     </ul>

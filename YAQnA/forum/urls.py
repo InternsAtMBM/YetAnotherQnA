@@ -11,4 +11,5 @@ urlpatterns = [
     url(r'^ask_question/$', views.ask_question, name='ask_question'),
     url(r'^submit_answer/(?P<question_id>[0-9]+)/$', views.submit_answer, name='submit_answer'),
     url(r'^question_detail/(?P<question_id>[0-9]+)/$', views.question_detail, name='question_detail'),
+    url(r'^(?P<username>\w+)/$', views.show_profile, name='show_profile'),
 ]

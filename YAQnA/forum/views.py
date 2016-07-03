@@ -1,19 +1,19 @@
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
-from .models import UserProfile, Question, Answer
+from .models import UserProfile, Question, Answer, User
 from forms import UserForm, UserProfileForm, QuestionForm, AnswerForm
 from django.http import HttpResponse, HttpResponseRedirect
 from django.core.urlresolvers import reverse
 
 
 def index(request):
-    trending_question = Question.objects.all()[:5]
-    return render(request,'forum/index.html',{'trending_question':trending_question,})
+    trending_question = Question.objects.order_by('-views')[:5]
+    return render(request, 'forum/index.html', {'trending_question':trending_question, })
 
 
 def about(request):
-    return render(request,'forum/about.html',{})
+    return render(request, 'forum/about.html',{})
 
 
 def ask_question(request):
@@ -37,7 +37,10 @@ def ask_question(request):
 
 def question_detail(request, question_id):
     question = get_object_or_404(Question,pk=question_id)
+    question.views = question.views + 1
+    question.save()
     answer = Answer.objects.filter(question=question)
+
     return render(request,'forum/question_detail.html',{'question':question,'answer':answer})
 
 
@@ -97,8 +100,8 @@ def register(request):
             user.save()
             profile = profile_form.save(commit=False)
             profile.user = user
-            if 'picture' in request.FILES:
-                profile.picture = request.FILES['picture']
+            if 'profile_picture' in request.FILES:
+                profile.profile_picture = request.FILES['profile_picture']
             profile.save()
             registered = True
         else:
@@ -108,6 +111,8 @@ def register(request):
         profile_form = UserProfileForm()
     return render(request, 'forum/register.html',{'user_form':user_form, 'profile_form':profile_form,'registered':registered})
 
-
-
+def show_profile(request,username):
+    USER = get_object_or_404(User,username=username)
+    user_profile = get_object_or_404(UserProfile,user=USER)
+    return render(request,'forum/show_profile.html',{'USER':USER,'user_profile':user_profile})
 

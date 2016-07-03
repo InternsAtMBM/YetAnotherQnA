@@ -18,12 +18,7 @@ TEMPLATE_DIR = os.path.join(BASE_DIR, 'templates')
 STATIC_DIR = os.path.join(BASE_DIR, 'static')
 STATICFILES_DIRS = [STATIC_DIR, ]
 
-REGISTRATION_OPEN = True
-# One-week activation window; you may, of course, use a different value.
-ACCOUNT_ACTIVATION_DAYS = 7
-# If True, the user will be automatically logged in.
-REGISTRATION_AUTO_LOGIN = True
-# The page you want users to arrive at after they successful log in
+
 LOGIN_REDIRECT_URL = '/forum/'
 LOGIN_URL = '/forum/login/'
 
@@ -128,5 +123,7 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.9/howto/static-files/
-STATICFILES_DIRS = [STATIC_DIR]
 STATIC_URL = '/static/'
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'
