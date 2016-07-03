@@ -18,7 +18,6 @@ class Question(models.Model):
     title = models.CharField(max_length=300,blank=False)
     text = models.CharField(max_length=1000,blank=True)
     views = models.IntegerField(default=0)
-    rating  =
     def __unicode__(self):
         return self.title
 
