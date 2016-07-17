@@ -1,0 +1,11 @@
+{% extends 'forum/base.html' %}
+
+{% block title_block %}
+Domains
+{% endblock %}
+{% block body_block %}
+    {% for  domain,question in domain_info.items %}
+
+        <a href="{% url 'forum:show_domain' domain %}" ><span class="label label-info">{{domain}}</span><span class="label label-default">{{question}}</span></a><br>
+    {% endfor %}
+{% endblock %}

@@ -2,7 +2,7 @@ from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from .models import UserProfile, Question, Answer, User
-from forms import UserForm, UserProfileForm, QuestionForm, AnswerForm
+from .forms import UserForm, UserProfileForm, QuestionForm, AnswerForm
 from django.http import HttpResponse, HttpResponseRedirect
 from django.core.urlresolvers import reverse
 
@@ -36,20 +36,30 @@ def ask_question(request):
         return render(request,'forum/ask_question.html',{'question_form':question_form})
 
 def question_detail(request, question_id):
-    question = get_object_or_404(Question,pk=question_id)
+    question = get_object_or_404(Question, pk=question_id)
     question.views = question.views + 1
     question.save()
-    answer = Answer.objects.filter(question=question)
+    answer_set = Answer.objects.filter(question=question)
+    question_vote = question.rating.get_rating_for_user(request.user, request.META['REMOTE_ADDR'])
+    answer_mega_set = []
+    for answer in answer_set:
+        answer_mega_set.append({'username': answer.user.username,'id':answer.id,'rating_likes':answer.rating_likes,
+                                'rating_dislikes':answer.rating_dislikes,'text':answer.text,
+                                "chk_user_vote": answer.rating.get_rating_for_user(request.user, request.META['REMOTE_ADDR'])
+                                })
 
-    return render(request,'forum/question_detail.html',{'question':question,'answer':answer})
+    print answer_mega_set
+    context = {'question':question, 'answer_set': answer_set, 'question_vote': question_vote
+               ,'answer_mega_set': answer_mega_set}
 
+    return render(request, 'forum/question_detail.html', context)
 
 def submit_answer(request, question_id):
     question = Question.objects.filter(pk=question_id)[0]
     if not request.user.is_authenticated():
         return render(request, 'forum/login.html')
     chk_duplicate = Answer.objects.filter(user=request.user, question=question)
-    if  chk_duplicate:
+    if chk_duplicate:
         return HttpResponse("You Can not answer more than one time for a particular Question")
 
     answer_form = AnswerForm()
@@ -115,4 +125,18 @@ def show_profile(request,username):
     USER = get_object_or_404(User,username=username)
     user_profile = get_object_or_404(UserProfile,user=USER)
     return render(request,'forum/show_profile.html',{'USER':USER,'user_profile':user_profile})
+
+def list_domains(request):
+    domains = Question.objects.order_by().values_list('domain').distinct()
+    domain_info = {}
+    for domain in domains:
+        domain_info[domain[0]]= Question.objects.filter(domain=domain[0]).count()
+
+    for key in domain_info.keys():
+        print key,domain_info[key]
+    return render(request,'forum/list_domains.html', {'domain_info':domain_info})
+
+def show_domain(request,domain):
+    questions = Question.objects.filter(domain=domain)
+    return render(request,'forum/show_domain.html', {'questions': questions})
 

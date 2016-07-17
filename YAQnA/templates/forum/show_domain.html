@@ -1,0 +1,9 @@
+{% extends 'forum/base.html' %}
+{% block title_block %}
+    {{questions.0.domain}}
+{% endblock %}
+{% block body_block %}
+    {% for question in questions %}
+    <a href="{% url 'forum:question_detail' question.id%}">{{question}}</a><br/>
+    {% endfor %}
+{% endblock %}

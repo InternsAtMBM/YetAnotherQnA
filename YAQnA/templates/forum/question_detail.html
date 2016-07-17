@@ -1,33 +1,59 @@
 {% extends "forum/base.html" %}
+{%  load static %}
+{% load staticfiles %}
 {% block title_block %}
     Question
 {% endblock %}
 {% block body_block %}
+
 {% if user.is_authenticated %}
     <ul>
         <li>{{ question.title }}</li>
         <li>{{question.text}}</li>
-        <li>Domain:{{question.domain}}</li>
-        <li>Asked By-<a href="{% url 'forum:show_profile' question.user.username%}">{{ question.user.username}}</a></li>
+        <li>Domain:<a href="{% url 'forum:show_domain' question.domain %}"> <span class="label label-info">{{ question.domain }}</span></a></li>
+        <li>Asked By-<a href="{% url 'forum:show_profile' question.user.username %}">{{ question.user.username}}</a></li>
         <li>Views - {{question.views}}</li>
-        {% if answer %}
+
+        <script src="{% static "forum/js/vote.js" %}"></script>
+
+        {% if question_vote == -1 %}
+            <button value='{% url "forum:question_rating" question.id 1  %}' id="question-vote-up" class="btn btn-primary"><i class="fa fa-thumbs-up"></i>Upvote  <span class="label label-default">{{ question.rating_likes }}</span></button>
+            <button value='{% url "forum:question_rating" question.id -1  %}' id="question-vote-down" class="btn btn-danger"><i class="fa fa-thumbs-down"></i>Downvoted  <span class="label label-default">{{ question.rating_dislikes }}</span></button>
+        {% elif question_vote == 1 %}
+            <button value='{% url "forum:question_rating" question.id 1  %}' class="btn btn-success" id="question-vote-up"> <i class="fa fa-thumbs-up"></i>Upvoted  <span class="label label-default">{{ question.rating_likes }}</span></button>
+            <button value='{% url "forum:question_rating" question.id -1  %}' class="btn btn-warning"  id="question-vote-down" ><i class="fa fa-thumbs-down"></i>Downvote  <span class="label label-default">{{ question.rating_dislikes }}</span></button>
+        {% else %}
+            <button value='{% url "forum:question_rating" question.id 1  %}' class="btn btn-primary" id="question-vote-up" ><i class="fa fa-thumbs-up"></i>Upvote  <span class="label label-default">{{ question.rating_likes }}</span></button>
+            <button value='{% url "forum:question_rating" question.id -1  %}' class="btn btn-warning"  id="question-vote-down" ><i class="fa fa-thumbs-down"></i>Downvote  <span class="label label-default">{{ question.rating_dislikes }}</span></button>
+        {%  endif %}
+        {% if answer_mega_set %}
         <h4>-------Answers------</h4>
-        {% for ans in answer %}
+        {% for answer in answer_mega_set %}
         <div class="jumbotron">
         <ul>
-            <li>{{ans.text|urlize}}</li>
-            <li>Submitted By-<a href="{% url 'forum:show_profile' ans.user.username %}">{{ans.user.username}}</a></li>
+            <li>{{answer.text|urlize}}</li>
+            <li>Submitted By-<a href="{% url 'forum:show_profile' answer.username %}">{{answer.username}}</a></li>
+
+            {% if answer.chk_user_vote == -1 %}
+            <button id="answer-vote-up" value="{% url 'forum:answer_rating' answer.id 1 %}" class="btn btn-primary"><i class="fa fa-thumbs-up"></i><span class="label label-default">{{ answer.rating_likes  }}</span></button>
+            <button id="answer-vote-down" value="{% url 'forum:answer_rating' answer.id -1 %}" class="btn btn-danger"><i class="fa fa-thumbs-down"></i><span class="label label-default">{{ answer.rating_dislikes }}</span></button>
+            {% elif answer.chk_user_vote == 1 %}
+            <button id="answer-vote-up" value="{% url 'forum:answer_rating' answer.id 1 %}" class="btn btn-success"><i class="fa fa-thumbs-up"></i><span class="label label-default">{{ answer.rating_likes }}</span></button>
+            <button id="answer-vote-down" value="{% url 'forum:answer_rating' answer.id -1 %}" class="btn btn-warning"><i class="fa fa-thumbs-down"></i><span class="label label-default">{{ answer.rating_dislikes  }}</span></button>
+            {% else %}
+            <button id="answer-vote-up" value="{% url 'forum:answer_rating' answer.id 1 %}" class="btn btn-primary"><i class="fa fa-thumbs-up"></i><span class="label label-default">{{ answer.rating_likes }}</span></button>
+            <button id="answer-vote-down" value="{% url 'forum:answer_rating' answer.id -1 %}" class="btn btn-warning"><i class="fa fa-thumbs-down"></i><span class="label label-default">{{ answer.rating_dislikes }}</span></button>
+            {%  endif %}
         </ul>
         </div>
         {% endfor %}
         {% endif %}
     </ul>
 
-    {% for ans in answer %}
-    {% endfor %}
-    <p><a href="{% url 'forum:submit_answer' question.id %}">Submit Answer</a></button></p>
+    <p><a href="{% url 'forum:submit_answer' question.id %}" class="btn btn-primary">Submit Answer</a></p>
     {% else %}
         You need to <a href="{% url 'forum:user_login' %}">Login</a> to View this page
     {% endif %}
 
 {% endblock %}
+
