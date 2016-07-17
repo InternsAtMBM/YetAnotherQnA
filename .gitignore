@@ -1,6 +1,8 @@
 #ignore these files
+*.gif
 *.pyc
 YAQnA/db.sqlite3
-YAQnA/profile_images/*
 YAQnA/forum/migrations/*
 .idea/*
+*.jpg
+*.png
